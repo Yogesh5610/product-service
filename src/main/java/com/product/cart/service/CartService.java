@@ -1,11 +1,10 @@
 package com.product.cart.service;
 
-import com.netflix.discovery.converters.Auto;
 import com.product.cart.dto.CartRequestDto;
 import com.product.cart.dto.CartResponseDto;
 import com.product.cart.entity.Carts;
 import com.product.cart.repo.CartRepository;
-import com.product.jwtToken.JwtToken;
+import com.product.commonservice.CommonService;
 import com.product.product.entity.Products;
 import com.product.product.repo.ProductRepository;
 import com.product.user.entity.User;
@@ -30,10 +29,10 @@ public class CartService {
     private UserRepository userRepository;
 
     @Autowired
-    private JwtToken jwtToken;
+    private CommonService commonService;
 
     public String addToCart(CartRequestDto cartRequestDto){
-        Long userId = jwtToken.getUserId();
+        Long userId = commonService.getUserId();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Products products = productRepository.findById(cartRequestDto.getProductId())
@@ -62,7 +61,7 @@ public class CartService {
     }
 
     public List<CartResponseDto> getCartItems() {
-        Long userId = jwtToken.getUserId();
+        Long userId = commonService.getUserId();
         List<Carts> cartsList = cartRepository.findByUserId(userId);
         return cartsList.stream().map(cart -> {
             CartResponseDto responseDto = new CartResponseDto();
